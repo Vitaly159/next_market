@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://localhost:5001/api/:path*", // сервер на порту 5001
+      },
+    ];
+  },
+  /* другие настройки, если есть */
 };
 
 export default nextConfig;

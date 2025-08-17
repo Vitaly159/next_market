@@ -1,17 +1,27 @@
 import express from "express";
+import cors from "cors";
 import connectDB from "./config/db";
+import dotenv from "dotenv";
+import registerRoutes from "./routes";
 
+dotenv.config();
 const app = express();
 
-// connectDB(); // подключение к базе данных
-
 app.use(express.json());
+app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Backend is running");
-});
+registerRoutes(app); // подключение всех маршрутов
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB(); // дождаться подключения к базе
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Ошибка при запуске сервера:", err);
+  }
+};
+
+startServer();
