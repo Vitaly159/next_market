@@ -3,13 +3,20 @@ import cors from "cors";
 import connectDB from "./config/db";
 import dotenv from "dotenv";
 import registerRoutes from "./routes";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 
+app.use(cookieParser()); // для чтения cookies
 app.use(express.json());
-app.use(cors());
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // адрес вашего фронтенда
+    credentials: true,
+  })
+);
 registerRoutes(app); // подключение всех маршрутов
 
 const startServer = async () => {

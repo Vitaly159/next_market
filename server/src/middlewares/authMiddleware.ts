@@ -10,18 +10,16 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  const token = req.headers.cookie?.split("token=")[1]; // читаем из cookies
+  if (!token) {
     return res.status(401).json({ message: "Нет токена" });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
     const decoded = jwt.verify(token, "your_jwt_secret");
-    req.user = decoded; // можно добавить пользователя в запрос
+    req.user = decoded; // добавляем пользователя в запрос
     next();
+    return 
   } catch (err) {
     return res.status(401).json({ message: "Недействительный токен" });
   }

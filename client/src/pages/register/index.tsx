@@ -2,12 +2,17 @@ import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+import { WithAuthRedirect } from "../../lib/withAuthRedirect";
+
+export const getServerSideProps = WithAuthRedirect;
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +24,7 @@ export default function RegisterPage() {
         phoneNumber,
         password,
       });
+      router.push("/login");
       toast.success(res.data.message);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {

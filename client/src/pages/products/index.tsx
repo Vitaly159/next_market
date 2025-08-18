@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
+import { parseCookies } from "nookies";
 
 interface IProduct {
   _id: string;
@@ -15,9 +16,29 @@ interface Props {
   products: IProduct[];
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const res = await axios.get("http://localhost:5001/api/products");
-  const products: IProduct[] = res.data;
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const cookies = parseCookies(context);
+  const token = cookies.token; // читаем токен из cookies
+
+  let products: IProduct[] = [];
+
+  try {
+    // проверка токена, например, через API или jwt.verify
+    const res = await axios.get("http://localhost:5001/api/products", {
+      headers: { Cookie: `token=${token}` },
+    });
+    products = res.data;
+  } catch (err) {
+    // если токен недействителен — редирект
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
@@ -27,7 +48,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 };
 
 export default function ProductPage({ products }: Props) {
-  // const products = [];
   const [cart, setCart] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
 

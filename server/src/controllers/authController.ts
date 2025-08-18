@@ -12,8 +12,9 @@ export const registerController = async (req: Request, res: Response) => {
 
 export const loginController = async (req: Request, res: Response) => {
   try {
-    const result = await loginUser(req.body);
-    res.json(result);
+    const { token } = await loginUser(req.body);
+    res.cookie("token", token);
+    res.json("Успешная авторизация");
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

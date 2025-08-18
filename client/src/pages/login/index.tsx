@@ -2,19 +2,22 @@ import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+import { WithAuthRedirect } from "../../lib/withAuthRedirect";
+
+export const getServerSideProps = WithAuthRedirect;
 
 export default function LoginPage() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/auth/login", { login, password });
-      // Сохраняем токен
-      localStorage.setItem("token", res.data.token);
-      toast.success("Успешный вход!");
+      await axios.post("/api/auth/login", { login, password });
+      router.push("/products");
       // Можно перенаправить на защищенную страницу
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
