@@ -4,6 +4,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import { parseCookies } from "nookies";
+import { Product } from "../../components/product";
 
 interface IProduct {
   _id: string;
@@ -80,61 +81,14 @@ export default function ProductPage({ products }: Props) {
       <h1>Каталог товаров</h1>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
         {products.map((product) => (
-          <div
+          <Product
             key={product._id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: 8,
-              padding: 16,
-              width: 250,
-              position: "relative",
-            }}
-          >
-            <img
-              src="https://static.tildacdn.com/tild3830-6438-4063-a565-323364326162/Vozvrat_ne_kachestve.png"
-              alt="Товар"
-              style={{
-                width: "100%",
-                height: "auto",
-                marginBottom: 10,
-                borderRadius: 4,
-              }}
-            />
-            {/* Иконка "мне нравится" */}
-            <button
-              onClick={() => toggleFavorite(product._id, product.name)}
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                background: favorites.includes(product._id) ? "red" : "gray",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                width: 30,
-                height: 30,
-                cursor: "pointer",
-              }}
-              title={
-                favorites.includes(product._id)
-                  ? "Убрать из избранных"
-                  : "Добавить в избранное"
-              }
-            >
-              ♥
-            </button>
-            <h2>{product.name}</h2>
-            <p>Цена: {product.price} ₽</p>
-            <p>{product.description}</p>
-            <button
-              style={{ marginTop: 10 }}
-              onClick={() => toggleCartItem(product._id, product.name)}
-            >
-              {cart.includes(product._id)
-                ? "Удалить из корзины"
-                : "Добавить в корзину"}
-            </button>
-          </div>
+            product={product}
+            isFavorite={favorites.includes(product._id)}
+            isInCart={cart.includes(product._id)}
+            onToggleFavorite={toggleFavorite}
+            onToggleCart={toggleCartItem}
+          />
         ))}
       </div>
       <ToastContainer />
